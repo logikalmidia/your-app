@@ -12,10 +12,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <title>AdminLTE 3 | Starter</title>
 
+  <!-- CSRF Token -->
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body class="hold-transition sidebar-mini">
-<div class="wrapper">
+<div class="wrapper" id="app">
 
   <!-- Navbar -->
   <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
@@ -69,16 +72,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
                with font-awesome or any other icon font library -->
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
+            <router-link to="/dashboard" class="nav-link">
+              <i class="nav-icon fas fa-tachometer-alt blue"></i>
+              <p class="">
                 Dashboard
               </p>
-            </a>
+            </router-link>
           </li>
           <li class="nav-item has-treeview">
-            <a href="#" class="nav-link active">
-              <i class="nav-icon fas fa-cog"></i>
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-cog green"></i>
               <p>
                 Management
                 <i class="right fa fa-angle-left"></i>
@@ -86,29 +89,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="#" class="nav-link active">
-                  <i class="fa fa-circle-o nav-icon"></i>
-                  <p>Active Page</p>
-                </a>
+                <router-link to="/users" class="nav-link ">
+                  <i class="fas fa-users nav-icon"></i>
+                  <p>Users</p>
+                </router-link>
               </li>
             </ul>
             <li class="nav-item">
-                    <a href="#" class="nav-link">
-                      <i class="nav-icon fas fa-user"></i>
+                    <router-link to="/profile" class="nav-link">
+                      <i class="nav-icon fas fa-user orange"></i>
                       <p>
                         Profile
                       </p>
-                    </a>
+                    </router-link>
                   </li>
     
                   <li class="nav-item">
-                        <a href="#" class="nav-link">
-                          <i class="nav-icon fas fa-power-off"></i>
-                          <p>
-                            Logout
-                          </p>
-                        </a>
-                      </li>
+                    <a class="nav-link" href="{{ route('logout') }}"
+                        onclick="event.preventDefault();
+                        document.getElementById('logout-form').submit();">
+                        <i class="nav-icon fas fa-power-off red"></i>
+                        <p>
+                            {{ __('Logout') }}
+                        </p>
+                    </a>
+
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                  </li>
         </ul>
       </nav>
       <!-- /.sidebar-menu -->
@@ -118,12 +127,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-      
+
     <!-- Main content -->
     <div class="content">
       <div class="container-fluid">
         <div class="row">
-
+            <router-view></router-view>
         </div>
         <!-- /.row -->
       </div><!-- /.container-fluid -->
