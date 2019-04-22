@@ -13,29 +13,35 @@
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover">
-                  <tbody><tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Type</th>
-                    <th>Modify</th>
-                  </tr>
-                  <tr>
-                    <td>183</td>
-                    <td>John Doe</td>
-                    <td>11-7-2014</td>
-                    <td><span class="tag tag-success">Approved</span></td>
-                    <td>
-                        <a href="#">
-                            <i class="fa fa-edit blue"></i>
-                        </a>
-                        &nbsp;
-                        <a href="#">
-                            <i class="fa fa-trash red"></i>
-                        </a>
-                    </td>
-                  </tr>
-                </tbody></table>
+                  <tbody>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Type</th>
+                      <th>Modify</th>
+                      <th>Date Created</th>
+                    </tr>
+
+
+                    <tr v-for="user in users" :key="user.id">
+                      <td>{{user.id}}</td>
+                      <td>{{user.name}}</td>
+                      <td>{{user.email}}</td>
+                      <td>{{user.type | upText}}</td>
+                      <td>{{user.created_at | myDate}}</td>
+                      <td>
+                          <a href="#">
+                              <i class="fa fa-edit blue"></i>
+                          </a>
+                          &nbsp;
+                          <a href="#">
+                              <i class="fa fa-trash red"></i>
+                          </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
               <!-- /.card-body -->
             </div>
@@ -53,8 +59,8 @@
                 <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                
+            <form @submit.prevent="createUser">
+              <div class="modal-body">
               <div class="form-group">
                 <input v-model="form.name" type="text" name="name" placeholder="name"
                   class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
@@ -74,7 +80,7 @@
               </div>
 
               <div class="form-group">
-                <select v-model="form.email" type="text" name="type"
+                <select v-model="form.type" type="text" name="type"
                   class="form-control" :class="{ 'is-invalid': form.errors.has('type') }">
                   <option value="">Select User Role</option>
                   <option value="admin">Admin</option>
@@ -85,17 +91,18 @@
               </div>
 
               <div class="form-group">
-                <textarea v-model="form.password" id="password" type="password" name="password" placeholder="Enter Your Password"
-                  class="form-control" :class="{ 'is-invalid': form.errors.has('password') }"></textarea>
+                <input v-model="form.password" id="password" type="password" name="password" placeholder="Enter Your Password"
+                  class="form-control" :class="{ 'is-invalid': form.errors.has('password') }">
                 <has-error :form="form" field="password"></has-error>
               </div>
 
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary">Create</button>
             </div>
-            </div>
+          </form>
+          </div>
         </div>
         </div>
     </div>
@@ -108,6 +115,9 @@
 
       data() {
         return {
+
+          users : {},
+
           form: new Form({
             name: '',
             email: '',
@@ -118,8 +128,24 @@
           })
         }
       },
-        mounted() {
-            console.log('Component mounted.')
+      methods: {
+        loadUsers() {
+          axios.get("api/user").then(({ data }) => (this.users = data.data));
+        },
+        createUser() {
+          this.$Progress.start();
+          this.form.post('api/user');
+
+          Toast.fire({
+            type: 'success',
+            title: 'Signed in successfully'
+          })
+          
+          this.$Progress.finish();
+        }
+      },
+        created() {
+            this.loadUsers();
         }
     }
 </script>
